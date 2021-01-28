@@ -13,12 +13,13 @@ Flutterwave NodeJS Assessment
     npm start
 
 ## Working with the API
-    http://localhost:2500
+   host: http://localhost:2500
     
-    - base route: GET /
-    - validation route: 
-        - POST /validate-rule 
-        - request body: 
+  - base route: GET /
+  - validation route: 
+     - POST /validate-rule 
+     - request body:
+   
    Parameter | Type | Description
    --- | --- | ---
    `rule` | object | This should contain 3 fields: field `string`, condition, string`[eq, neq, gt, gte, contains]`, condition_value: `number`
