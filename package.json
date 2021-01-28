@@ -1,0 +1,38 @@
+{
+  "name": "flutterwave",
+  "version": "1.0.0",
+  "description": "flutterwave assessment",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src -d build",
+    "start": "npm run build && ./node_modules/.bin/nodemon build",
+    "restart": "rimraf build && npm run start",
+    "dev": "npm run restart"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/razaqfatiu/flutterwave.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/razaqfatiu/flutterwave/issues"
+  },
+  "homepage": "https://github.com/razaqfatiu/flutterwave#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "eslint": "^7.18.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "nodemon": "^2.0.7"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0"
+  }
+}
