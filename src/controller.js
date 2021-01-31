@@ -55,18 +55,7 @@ export const validate = (req, res) => {
   const { body } = req;
   const { rule, data } = body;
 
-  // if (
-  //   data === undefined
-  //   || typeof data !== 'object'
-  //   || Array.isArray(data) !== true
-  //   || typeof data !== 'string'
-  //   || data === false
-  // ) {
-  //   return res.json(sampleResponse('data is required.', 'error', null));
-  // }
-
   if (rule === undefined || rule === null) {
-    console.log(rule);
     return res
       .status(400)
       .json(sampleResponse('rule is required.', 'error', null));
@@ -98,7 +87,6 @@ export const validate = (req, res) => {
     || rule.condition_value === undefined
     || rule.condition_value === null
   ) {
-    console.log(typeof rule.field);
     return res
       .status(400)
       .json(sampleResponse('Invalid JSON payload passed.', 'error', null));
@@ -116,23 +104,23 @@ export const validate = (req, res) => {
   //   );
   // }
 
-  if (!rule.field.include('.')) {
-    if (rule.condition === 'eq') {
-      data[rule.field] === rule.condition_value ? validationResponse(`field ${rule.field} successfully validated.`, 'success', false, rule) : validationResponse(`field ${rule.field} failed validation.`, 'error', true, rule);
-    }
-    if (rule.condition === 'gte') {
-      data[rule.field] >= rule.condition_value ? validationResponse(`field ${rule.field} successfully validated.`, 'success', false, rule) : validationResponse(`field ${rule.field} failed validation.`, 'error', true, rule);
-    }
-    if (rule.condition === 'neq') {
-      data[rule.field] !== rule.condition_value ? validationResponse(`field ${rule.field} successfully validated.`, 'success', false, rule) : validationResponse(`field ${rule.field} failed validation.`, 'error', true, rule);
-    }
-    if (rule.condition === 'gt') {
-      data[rule.field] > rule.condition_value ? validationResponse(`field ${rule.field} successfully validated.`, 'success', false, rule) : validationResponse(`field ${rule.field} failed validation.`, 'error', true, rule);
-    }
-    if (rule.condition === 'contains') {
-      data[rule.field].includes(rule.condition_value) ? validationResponse(`field ${rule.field} successfully validated.`, 'success', false, rule) : validationResponse(`field ${rule.field} failed validation.`, 'error', true, rule);
-    }
-  }
+  // if ((typeof rule.feild === 'string' || typeof rule.field === 'object') && !rule.field.includes('.')) {
+  // if (rule.condition === 'eq') {
+  //   data[rule.field] === rule.condition_value ? validationResponse(`field ${rule.field} successfully validated.`, 'success', false, rule) : validationResponse(`field ${rule.field} failed validation.`, 'error', true, rule);
+  // }
+  // if (rule.condition === 'gte') {
+  //   data[rule.field] >= rule.condition_value ? validationResponse(`field ${rule.field} successfully validated.`, 'success', false, rule) : validationResponse(`field ${rule.field} failed validation.`, 'error', true, rule);
+  // }
+  // if (rule.condition === 'neq') {
+  //   data[rule.field] !== rule.condition_value ? validationResponse(`field ${rule.field} successfully validated.`, 'success', false, rule) : validationResponse(`field ${rule.field} failed validation.`, 'error', true, rule);
+  // }
+  // if (rule.condition === 'gt') {
+  //   data[rule.field] > rule.condition_value ? validationResponse(`field ${rule.field} successfully validated.`, 'success', false, rule) : validationResponse(`field ${rule.field} failed validation.`, 'error', true, rule);
+  // }
+  // if (rule.condition === 'contains') {
+  //   data[rule.field].includes(rule.condition_value) ? validationResponse(`field ${rule.field} successfully validated.`, 'success', false, rule) : validationResponse(`field ${rule.field} failed validation.`, 'error', true, rule);
+  // }
+  // }
 
   if (rule.field.includes('.')) {
     const nestedField = rule.field.split('.');
@@ -147,9 +135,8 @@ export const validate = (req, res) => {
           ),
         );
     }
-    console.log(nestedField[0]);
 
-    if (typeof data === 'object' && !(data.hasOwnProperty(nestedField[0]))) {
+    if (typeof data === 'object' && (!data.hasOwnProperty(nestedField[0]))) {
       return res
         .status(400)
         .json(
@@ -161,7 +148,7 @@ export const validate = (req, res) => {
         );
     }
 
-    if (typeof nestedField[0] !== 'object') {
+    if (typeof data[nestedField[0]] !== 'object') {
       return res
         .status(400)
         .json(
@@ -173,7 +160,7 @@ export const validate = (req, res) => {
         );
     }
 
-    if (typeof nestedField[0] === 'object' && nestedField[1].hasOwnProperty(nestedField[0])) {
+    if (typeof data[nestedField[0]] === 'object' && !(data[nestedField[0]].hasOwnProperty(nestedField[1]))) {
       return res
         .status(400)
         .json(
@@ -184,6 +171,38 @@ export const validate = (req, res) => {
           ),
         );
     }
+
+    if (rule.condition === 'eq') {
+      data[nestedField[0]][nestedField[1]] === rule.condition_value ? validationResponse(`field ${rule.field} successfully validated.`, 'success', false, rule) : validationResponse(`field ${rule.field} failed validation.`, 'error', true, rule);
+    }
+    if (rule.condition === 'gte') {
+      data[nestedField[0]][nestedField[1]] >= rule.condition_value ? validationResponse(`field ${rule.field} successfully validated.`, 'success', false, rule) : validationResponse(`field ${rule.field} failed validation.`, 'error', true, rule);
+    }
+    if (rule.condition === 'neq') {
+      data[nestedField[0]][nestedField[1]] !== rule.condition_value ? validationResponse(`field ${rule.field} successfully validated.`, 'success', false, rule) : validationResponse(`field ${rule.field} failed validation.`, 'error', true, rule);
+    }
+    if (rule.condition === 'gt') {
+      data[nestedField[0]][nestedField[1]] > rule.condition_value ? validationResponse(`field ${rule.field} successfully validated.`, 'success', false, rule) : validationResponse(`field ${rule.field} failed validation.`, 'error', true, rule);
+    }
+    if (rule.condition === 'contains' && (typeof data[nestedField[0]][nestedField[1]] === 'object' || typeof data[nestedField[0]][nestedField[1]] !== 'string')) {
+      data[nestedField[0]][nestedField[1]].includes(rule.condition_value) ? validationResponse(`field ${rule.field} successfully validated.`, 'success', false, rule) : validationResponse(`field ${rule.field} failed validation.`, 'error', true, rule);
+    }
+  }
+
+  if (rule.condition === 'eq') {
+    data[rule.field] === rule.condition_value ? validationResponse(`field ${rule.field} successfully validated.`, 'success', false, rule) : validationResponse(`field ${rule.field} failed validation.`, 'error', true, rule);
+  }
+  if (rule.condition === 'gte') {
+    data[rule.field] >= rule.condition_value ? validationResponse(`field ${rule.field} successfully validated.`, 'success', false, rule) : validationResponse(`field ${rule.field} failed validation.`, 'error', true, rule);
+  }
+  if (rule.condition === 'neq') {
+    data[rule.field] !== rule.condition_value ? validationResponse(`field ${rule.field} successfully validated.`, 'success', false, rule) : validationResponse(`field ${rule.field} failed validation.`, 'error', true, rule);
+  }
+  if (rule.condition === 'gt') {
+    data[rule.field] > rule.condition_value ? validationResponse(`field ${rule.field} successfully validated.`, 'success', false, rule) : validationResponse(`field ${rule.field} failed validation.`, 'error', true, rule);
+  }
+  if (rule.condition === 'contains' && (typeof data[rule.field] === 'string' || typeof data[rule.field === 'object'])) {
+    data[rule.field].includes(rule.condition_value) ? validationResponse(`field ${rule.field} successfully validated.`, 'success', false, rule) : validationResponse(`field ${rule.field} failed validation.`, 'error', true, rule);
   }
 
   return res.json(body);
